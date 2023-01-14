@@ -1,6 +1,47 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+struct Atom {
+  string element;
+  double x, y, z;
+};
+
+struct Molecule {
+  vector<Atom> atoms;
+
+  double compute_bond_length(int i, int j) {
+    double dx = atoms[i].x - atoms[j].x;
+    double dy = atoms[i].y - atoms[j].y;
+    double dz = atoms[i].z - atoms[j].z;
+    return sqrt(dx * dx + dy * dy + dz * dz);
+  }
+
+  vector<vector<int>> to_graph() {
+    vector<vector<int>> adjacency_list(atoms.size(), vector<int>());
+    for (int i = 0; i < atoms.size() - 1; i++) {
+      for (int j = i + 1; j < atoms.size(); j++) {
+        // auto atom1 = atoms[i], atom2 = atoms[j];
+        double length = compute_bond_length(i, j);
+        if (is_bonded(length, atoms[i].element, atoms[j].element)) {
+          adjacency_list[i].emplace_back(j);
+          adjacency_list[j].emplace_back(i);
+        }
+      }
+    }
+    return adjacency_list;
+  };
+};
+
+bool is_bonded(double length, string element1, string element2) {
+  map<string, vector<double>> bond_length_list = {
+    {"cc", {1.14, 1.62}}, {"ch", {1.02, 1.12}}, {"co", {1.20, 1.50}}, {"cn", {1.40, 1.54}}, {"hh", {0.57, 0.63}}, 
+    {"ho", {0.91, 1.01}}, {"hn", {0.95, 1.05}}, {"oo", {1.10, 1.39}}, {"no", {1.14, 1.26}}, {"nn", {1.04, 1.14}}
+  };
+  string s = element1 + element2;
+  sort(s.begin(), s.end());
+  return (bond_length_list[s][0] < length && length < bond_length_list[s][0]);
+}
+
 struct Molecule {
   vector<string> elements;
   vector<vector<double>> coordinates;
@@ -89,8 +130,6 @@ int main() {
         }
       }
     }
-
-    cout << "ok" << endl;
 
     graph.bfs();
 
