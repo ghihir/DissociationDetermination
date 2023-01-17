@@ -1,24 +1,26 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// 原子の情報を保持する構造体
 struct Atom {
   string element;
   double x, y, z;
 };
 
+// 分子の情報を保持する構造体
 struct Molecule {
-  vector<Atom> atoms;
-  vector<vector<int>> graph;
+  vector<Atom> atoms;           // 分子を原子の集合として扱う
+  vector<vector<int>> graph;    // 分子をグラフとして扱う
   vector<int> visited;
 
-  double compute_length(Atom atom1, Atom atom2) {
+  double compute_length(Atom atom1, Atom atom2) {    // 各原子間の距離を求める
     double dx = atom1.x - atom2.x;
     double dy = atom1.y - atom2.y;
     double dz = atom1.z - atom2.z;
     return sqrt(dx * dx + dy * dy + dz * dz);
   }
 
-  bool is_bonded(double length, Atom atom1, Atom atom2) {
+  bool is_bonded(double length, Atom atom1, Atom atom2) {     // ２つの原子が結合しているか判定する
     map<string, vector<double>> bond_length_list = {
       {"CC", {1.14, 1.62}}, {"CH", {1.02, 1.12}}, {"CO", {1.20, 1.50}}, {"CN", {1.40, 1.54}}, {"HH", {0.57, 0.63}}, 
       {"HO", {0.91, 1.01}}, {"HN", {0.95, 1.05}}, {"OO", {1.10, 1.39}}, {"NO", {1.14, 1.26}}, {"NN", {1.04, 1.14}}
@@ -30,7 +32,7 @@ struct Molecule {
     return (bond_length_list[s][0] < length && length < bond_length_list[s][1]);
   }
 
-  void to_graph() {
+  void to_graph() {               // 分子の構造からグラフに変換する
     graph.resize(atoms.size());
     for (int i = 0; i < atoms.size() - 1; i++) {
       for (int j = i + 1; j < atoms.size(); j++) {
@@ -44,7 +46,7 @@ struct Molecule {
     }
   };
 
-  void dfs() {
+  void dfs() {       // グラフ上で深さ優先探索
     int s = 0;
     vector<bool> seen(graph.size(), false);
     stack<int> todo;
@@ -66,7 +68,7 @@ struct Molecule {
   bool is_dissociated() {
     to_graph();
     dfs();
-    return (visited.size() != atoms.size());
+    return (visited.size() != atoms.size());     // 分子が解離している⇒１回のDFSですべての頂点に到達できない
   }
 };
 
