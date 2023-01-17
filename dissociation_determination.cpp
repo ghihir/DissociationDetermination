@@ -11,7 +11,7 @@ struct Molecule {
   vector<vector<int>> graph;
   vector<int> visited;
 
-  double compute_bond_length(Atom atom1, Atom atom2) {
+  double compute_length(Atom atom1, Atom atom2) {
     double dx = atom1.x - atom2.x;
     double dy = atom1.y - atom2.y;
     double dz = atom1.z - atom2.z;
@@ -35,7 +35,7 @@ struct Molecule {
     for (int i = 0; i < atoms.size() - 1; i++) {
       for (int j = i + 1; j < atoms.size(); j++) {
         Atom atom1 = atoms[i], atom2 = atoms[j];
-        double length = compute_bond_length(atom1, atom2);
+        double length = compute_length(atom1, atom2);
         if (is_bonded(length, atom1, atom2)) {
           graph[i].emplace_back(j);
           graph[j].emplace_back(i);
