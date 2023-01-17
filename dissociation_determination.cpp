@@ -89,4 +89,9 @@ int main() {
 
     fout << molecule.is_dissociated() << endl;
   }
+
+  fin.close();
+  fout.close();
+
+  return 0;
 }
